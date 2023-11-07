@@ -6,22 +6,12 @@ const loadEvents = require("./Loaders/loadEvents");
 const config = require("./config");
 
 bot.commands = new Discord.Collection();
+bot.color = "#FFFFFF";
+bot.function = {
+    createId: require("./Functions/createID")
+}
 
 // Do this bot online
 bot.login(config.token);
 loadCommands(bot);
 loadEvents(bot);
-
-
-
-// Event bot when a message will be send
-// bot.on("messageCreate", async message => {
-
-//     if (message.content === "!ping") return bot.commands.get("ping").run(bot, message);
-// });
-
-// Event bot, example = send a message or a member join the server
-// bot.on("ready", async () => {
-
-//     console.log(`${bot.user.tag} est bien en ligne !`);
-// });

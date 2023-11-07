@@ -4,27 +4,31 @@ const ms = require("ms");
 module.exports = {
 
     name: "mute",
-    description: "Mute l'utilisateur",
+    description: "Mute l'utilisateur, celui-ci ne pourra plus réagir pendant la durée spécifié allant jusqu'à 28 jours",
     permission: Discord.PermissionFlagsBits.ModerateMembers,
     dm: false,
+    category: "Modération",
     options: [
         {
             type: "user",
             name: "membre",
             description: "Le membre à mute",
             required: true,
+            autocomplete: false,
         },
         {
             type: "string",
             name: "duration",
             description: "La durée du mute",
             required: true,
+            autocomplete: false,
         },
         {
             type: "string",
             name: "raison",
             description: "La raison du mute",
             required: false,
+            autocomplete: false,
         }
     ],
 
@@ -55,7 +59,7 @@ module.exports = {
 
         try { await user.send(`Tu as été mute du serveur ${message.guild.name} par ${message.user.tag} pendant ${time} pour la raison : \`${reason}\``); } catch (err) {}
 
-        await message.reply(`${message.user} a mute ${user.tag} pendant ${time} pour la raison : \`${reason}\``);
+        await message.reply(`${message.user} a mute \`${user.tag}\` pendant ${time} pour la raison : \`${reason}\``);
 
         await member.timeout(ms(time), reason);
     }

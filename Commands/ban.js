@@ -6,18 +6,21 @@ module.exports = {
     description: "Bannir l'utilisateur",
     permission: Discord.PermissionFlagsBits.BanMembers,
     dm: false,
+    category: "Modération",
     options: [
         {
             type: "user",
             name: "membre",
             description: "Le membre à bannir",
             required: true,
+            autocomplete: false,
         },
         {
             type: "string",
             name: "raison",
             description: "La raison du bannissement",
             required: false,
+            autocomplete: false,
         },
     ],
 
@@ -42,7 +45,7 @@ module.exports = {
 
             try { await user.send(`Tu as été banni du serveur ${message.guild.name} par ${message.user.tag} pour la raison : \`${reason}\``); } catch (err) {}
 
-            await message.reply(`${message.user} a banni ${user.tag} pour la raison : \`${reason}\``);
+            await message.reply(`${message.user} a banni \`${user.tag}\` pour la raison : \`${reason}\``);
 
             await message.guild.bans.create(user.id, {reason: reason});
 

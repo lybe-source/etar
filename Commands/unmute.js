@@ -7,18 +7,21 @@ module.exports = {
     description: "Unmute l'utilisateur",
     permission: Discord.PermissionFlagsBits.ModerateMembers,
     dm: false,
+    category: "Modération",
     options: [
         {
             type: "user",
             name: "membre",
             description: "Le membre à unmute",
             required: true,
+            autocomplete: false,
         },
         {
             type: "string",
             name: "raison",
             description: "La raison du unmute",
             required: false,
+            autocomplete: false,
         }
     ],
 
@@ -38,7 +41,7 @@ module.exports = {
 
         try { await user.send(`Vous avez été unmute par ${message.user.tag} pour la raison : \`${reason}\``) } catch (err) {}
 
-        await message.reply(`${message.user} a unmute ${user.tag} pour la raison : \`${reason}\``);
+        await message.reply(`${message.user} a unmute \`${user.tag}\` pour la raison : \`${reason}\``);
 
         await member.timeout(null, reason);
     }

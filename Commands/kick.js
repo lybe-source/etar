@@ -6,18 +6,21 @@ module.exports = {
     description: "Exclure l'utilisateur",
     permission: Discord.PermissionFlagsBits.KickMembers,
     dm: false,
+    category: "Modération",
     options: [
         {
             type: "user",
             name: "membre",
             description: "Le membre à exclure",
             required: true,
+            autocomplete: false,
         },
         {
             type: "string",
             name: "raison",
             description: "La raison de l'exclusion",
             required: false,
+            autocomplete: false,
         },
     ],
 
@@ -41,7 +44,7 @@ module.exports = {
 
         try { await user.send(`Tu as été exclu du serveur ${message.guild.name} par ${message.user.tag} pour la raison : \`${reason}\``); } catch (err) {}
 
-        await message.reply(`${message.user} a exclu ${user.tag} pour la raison : \`${reason}\``);
+        await message.reply(`${message.user} a exclu \`${user.tag}\` pour la raison : \`${reason}\``);
 
         await member.kick(reason);
 

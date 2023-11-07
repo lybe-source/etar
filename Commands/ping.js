@@ -6,7 +6,7 @@ module.exports = {
     description: "Affiche la latence",
     permission: "Aucune",
     dm: false, // Allow or not to dm the bot with this command
-    // options: [],
+    category: "Information",
 
     async run(bot, message, args) {
 

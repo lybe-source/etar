@@ -11,6 +11,7 @@ module.exports = async (bot, message) => {
 
         if (err) console.error("Erreur lors de la sélection des données d'expérience : ", err);
 
+        // Even if it is greater than 1, it inserts data
         if (req.length < 1) {
 
             const insertQuery = "INSERT INTO `experience` (user, guild, xp, level) VALUES (?, ?, ?, ?)";

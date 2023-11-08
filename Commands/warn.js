@@ -45,11 +45,10 @@ module.exports = {
 
         let ID = await bot.function.createId("WARN");
 
-        const insertQuery = "INSERT INTO warns (guild, user, author, warn, reason, date) VALUES (?, ?, ?, ?, ?, ?)";
+        const insertQuery = "INSERT INTO `warns` (guild, user, author, warn, reason, date) VALUES (?, ?, ?, ?, ?, ?)";
         const insertValues = [message.guild.id, user.id, message.user.id, ID, reason, Date.now()];
 
-        // db.query(`INSERT INTO warns (guild, user, author, warn, reason, date) VALUES ('${message.guild.id}', '${user.id}', '${message.user.id}', '${ID}', '${reason.replace(/'/g, "\\'")}', '${Date.now()}')`);
-        db.query(insertQuery, insertValues, (err, results) => {
+        db.query(insertQuery, insertValues, (err) => {
             
             if (err) {
                 console.error("Erreur lors de l'insertion des données : ", err);

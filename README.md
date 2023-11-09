@@ -1,8 +1,8 @@
 # Bot discord Tera
 
 ***Don't use the `/clear` command in the channel where the messages to be deleted are located.***
-***This will return an error in the console and the bot will shutdown***
-***I advise you to have a channel specifically for bot commands***
+***This will return an error in the console and the bot will shutdown.***  
+***I advise you to have a channel specifically for bot commands.***
 
 ## Sommary
 - [Init npm](https://github.com/lybe-source/etar/tree/main#initialiser-npm)

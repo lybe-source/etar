@@ -43,7 +43,7 @@ node main
 | kick     | username OR userID   | reason OR null       |                | Kick out a member                                                                                |
 | ban      | username OR userID   | reason OR null       |                | Same as kick but prevents it from coming back with an invitation link                            |
 | unban    | username OR userID   | reason OR null       |                | Removes the ban if the user is banned from the server                                            |
-| mute     | username OR userID   | duration(ms OR days) | reason OR null | Prevents the member from writing, reacting or joining a voice channel for up to 28 days          |
+| mute     | username OR userID   | duration(days OR hours OR seconds) | reason OR null | Prevents the member from writing, reacting or joining a voice channel for up to 28 days. Time unit : Days = d, hours = h, seconds = s |
 | unmute   | username OR userID   | reason OR null       |                | Allows the muted user to speak again, react and join voice channels                              |
 | clear    | channel OR channelID | number : 1 => 100    |                | Deletes number messages in the channel defined in the command as long as they aren't 14 days old |
 | help     | command OR null      |                      |                | Display the commands available and a little description                                          |

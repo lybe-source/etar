@@ -1,25 +1,33 @@
 # Bot discord Tera
 
-## Sommary
-[Init npm]()
-[Version]()
-[Run Bot]()
-[Commands available]()
-[Dependencies]()
+***Don't use the `/clear` command in the channel where the messages to be deleted are located.***
+***This will return an error in the console and the bot will shutdown***
+***I advise you to have a channel specifically for bot commands***
 
-## Initialiser npm
+## Sommary
+- [Init npm](https://github.com/lybe-source/etar/tree/main#initialiser-npm)
+- [Version](https://github.com/lybe-source/etar/tree/main#conna%C3%AEtre-la-version-de-la-librairie-discordjs)
+- [Run Bot](https://github.com/lybe-source/etar/tree/main#d%C3%A9marrer-le-code)
+- [Commands available](https://github.com/lybe-source/etar/tree/main#liste-des-commandes-disponibles)
+- [Dependencies](https://github.com/lybe-source/etar/tree/main#dependencies)
+
+---
+
+## Installation
+
+### Initialiser npm
 
 ```bash
 npm init
 ```
 
-## Connaître la version de la librairie discord.js
+### Connaître la version de la librairie discord.js
 
 ```bash
 npm ls discord.js
 ```
 
-## Démarrer le code
+### Démarrer le code
 
 ```bash
 node main

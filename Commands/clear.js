@@ -45,9 +45,9 @@ module.exports = {
         } catch (err) {
 
             let messages = [...(await channel.messages.fetch()).filter(msg => !msg.interaction && (Date.now() - msg.createdAt) <= 1209600000).values()];
-            if (messages.length <= 0) return message.followUp("Aucun message à supprimé car ils datent tous de plus de 14 jours dans le salon "+ `${channel}` +" !");
+            if (messages.length <= 0) return message.followUp("Aucun message à supprimé car ils datent tous de plus de 14 jours dans le salon ou que se sont des interactions "+ `${channel}` +" !");
             await channel.bulkDelete(messages);
-            await message.followUp({content: `J'ai pu supprimé uniquement \`${messages.length}\` message(s) car les autres dataient de plus de 14 jours dans le salon ${channel} !`, ephemeral: true});
+            await message.followUp({content: `J'ai pu supprimé uniquement \`${messages.length}\` message(s) car les autres dataient de plus de 14 jours ou que se sont des interactions dans le salon ${channel} !`, ephemeral: true});
         }
     }
 }

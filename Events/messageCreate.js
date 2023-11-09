@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const mysql = require("mysql2/promise");
 const config = require("../config");
 
-module.exports = async (message) => {
+module.exports = async (bot, message) => {
 
     let db = await mysql.createConnection({
         host: config.hostDB,

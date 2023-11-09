@@ -36,14 +36,19 @@ node main
 ---
 
 ## Liste des commandes disponibles
-- ping
-- kick [username||userID] [reason||null]
-- ban [username||userID] [reason||null]
-- unban [username||userID] [reason||null]
-- mute [username||userID] [duration(ms||d)] [reason||null]
-- unmute [username||userID] [reason||null]
-- clear [channel||channelID] [number: 1 => 100]
-- help [command||null]
+
+|:---------|:--------------------:|:--------------------:|:--------------:|:--------------:|
+| Command  | Parameter 1          | Parameter 2          | Parameter 3    | Description    |
+| ping     |                      |                      |                | Gives bot latency |
+| kick     | username OR userID   | reason OR null       |                | Kick out a member |
+| ban      | username OR userID   | reason OR null       |                | Same as kick but prevents it from coming back with an invitation link |
+| unban    | username OR userID   | reason OR null       |                | Removes the ban if the user is banned from the server |
+| mute     | username OR userID   | duration(ms OR days) | reason OR null | Prevents the member from writing, reacting or joining a voice channel for up to 28 days |
+| unmute   | username OR userID   | reason OR null       |                | Allows the muted user to speak again, react and join voice channels |
+| clear    | channel OR channelID | number : 1 => 100    |                | Deletes the number of messages from a channel defined in the command as long as it hasn't been 14 days since they were sent |
+| help     | command OR null      |                      |                | Display the commands available and a little description |
+| warn     | username OR userID   | reason               |                | Give a warning to a member and record it in the database |
+| warnlist | username OR userID   |                      |                | Display the warnings for the member defined in the command |
 
 ### Ping
 Donne la latence du bot

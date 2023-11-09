@@ -1,31 +1,36 @@
 const Discord = require("discord.js");
+const mysql = require("mysql2/promise");
+const config = require("../config");
 
-module.exports = async (bot, message) => {
+module.exports = async (message) => {
 
-    let db = bot.db;
+    let db = await mysql.createConnection({
+        host: config.hostDB,
+        user: config.userDB,
+        password: config.passwordDB,
+        database: config.database
+    });
 
     const selectQuery = 'SELECT * FROM `experience` WHERE `guild` = ? AND `user` = ?';
     const selectValues = [message.guild.id, message.author.id];
 
-    db.query(selectQuery, selectValues, async (err, req) => {
+    try {
 
-        if (err) console.error("Erreur lors de la sélection des données d'expérience : ", err);
+        const [req] = await db.query(selectQuery, selectValues);
 
         // Even if it is greater than 1, it inserts data
         if (req.length < 1) {
 
             const insertQuery = "INSERT INTO `experience` (user, guild, xp, level) VALUES (?, ?, ?, ?)";
-            const insertValues = [message.guild.id, message.author.id, '0', '0'];
+            const insertValues = [message.author.id, message.guild.id, '0', '0'];
 
-            db.query(insertQuery, insertValues, (err) => {
+            await db.query(insertQuery, insertValues, (err) => {
             
                 if (err) {
                     console.error("Erreur lors de l'insertion des données : ", err);
                 } else {
                     console.log("Données insérées avec succès !");
                 }
-
-                db.end();
     
             });
 
@@ -36,13 +41,10 @@ module.exports = async (bot, message) => {
 
             if ((level + 1) * 1000 <= xp) {
 
-                let newXP = (xp - (level + 1) * 1000);
-                let newLevel = level + 1;
+                const xpUpdateQuery = "UPDATE `experience` SET `xp` = ? WHERE `guild` = ? AND `user` = ?";
+                const xpUpdateValues = [(level + 1) * 1000, message.guild.id, message.author.id];
 
-                const updateXPQuery = "UPDATE `experience` SET `xp` = ? WHERE `guild` = ? AND `user` = ?";
-                const updateXPValues = [newXP, message.guild.id, message.author.id];
-
-                db.query(updateXPQuery, updateXPValues, (err) => {
+                await db.query(xpUpdateQuery, xpUpdateValues, (err) => {
                     
                     if (err) {
                         console.error("Erreur lors de la mise à jour de xp : ", err);
@@ -52,18 +54,16 @@ module.exports = async (bot, message) => {
 
                 })
 
-                const updateLevelQuery = "UPDATE `experience` SET `level` = ? WHERE `guild` = ? AND `user` = ?";
-                const updateLevelValues = [newLevel, message.guild.id, message.author.id];
+                const levelUpdateQuery = "UPDATE `experience` SET `level` = level + 1 WHERE `guild` = ? AND `user` = ?";
+                const levelUpdateValues = [message.guild.id, message.author.id];
 
-                db.query(updateLevelQuery, updateLevelValues, (err) => {
+                await db.query(levelUpdateQuery, levelUpdateValues, (err) => {
 
                     if (err) {
                         console.error("Erreur lors de la mise à jour des level : ", err);
                     } else {
                         console.log("Level mis à jour avec succès");
                     }
-
-                    db.end();
 
                 });
 
@@ -77,7 +77,7 @@ module.exports = async (bot, message) => {
                 const updateXPQuery = "UPDATE `experience` SET `xp` = ? WHERE `guild` = ? AND `user` = ?";
                 const updateXPValues = [newXP, message.guild.id, message.author.id];
 
-                db.query(updateXPQuery, updateXPValues, (err) => {
+                await db.query(updateXPQuery, updateXPValues, (err) => {
                     
                     if (err) {
                         console.error("Erreur lors de la mise à jour de xp : ", err);
@@ -85,11 +85,17 @@ module.exports = async (bot, message) => {
                         console.log("XP mise à jour avec succès !");
                     }
 
-                    db.end();
-
                 })
 
             }
         }
-    });
+    } catch (err) {
+
+        console.error("Erreur lors de l'exécution de la requête : ", err);
+
+    } finally {
+
+        await db.end();
+
+    }
 }

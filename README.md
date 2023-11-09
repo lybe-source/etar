@@ -37,8 +37,8 @@ node main
 
 ## Liste des commandes disponibles
 
-|:---------|:--------------------:|:--------------------:|:--------------:|:------------------------------------------------------------------------------------------------:|
 | Command  | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |
+|:---------|:--------------------:|:--------------------:|:--------------:|:-------------------------------------------------------------------------------------------------|
 | ping     |                      |                      |                | Gives bot latency                                                                                |
 | kick     | username OR userID   | reason OR null       |                | Kick out a member                                                                                |
 | ban      | username OR userID   | reason OR null       |                | Same as kick but prevents it from coming back with an invitation link                            |

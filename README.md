@@ -80,6 +80,8 @@ Affiche un embed des commandes disponibles
 
 ## Dependencies
 
+***NodeJS V18.18.0***
+
 ### Installation de la librairie discord.js
 
 ```bash
@@ -108,4 +110,10 @@ npm i ms
 
 ```bash
 npm i mysql
+```
+
+### 
+
+```bash
+npm i discord-canvas-easy@latest
 ```

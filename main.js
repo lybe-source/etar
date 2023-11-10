@@ -8,7 +8,7 @@ const config = require("./config");
 bot.commands = new Discord.Collection();
 bot.color = "#FFFFFF";
 bot.function = {
-    createId: require("./Functions/createID")
+    createId: require("./Functions/createID"),
 }
 
 // Do this bot online

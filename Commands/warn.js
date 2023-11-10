@@ -55,8 +55,7 @@ module.exports = {
             } else {
                 console.log("Données insérées avec succès !");
             }
-
-            db.end();
+            
         });
     }
 }

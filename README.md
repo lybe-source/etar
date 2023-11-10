@@ -112,7 +112,7 @@ npm i ms
 npm i mysql
 ```
 
-### 
+### Canvas
 
 ```bash
 npm i discord-canvas-easy@latest

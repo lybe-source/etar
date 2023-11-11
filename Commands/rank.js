@@ -5,7 +5,7 @@ const Path = require("path");
 module.exports = {
 
     name: "rank",
-    description: "Niveau du membre",
+    description: "Niveau de l'utilisateur",
     permission: "Aucune",
     dm: false,
     category: "Expérience",
@@ -52,7 +52,7 @@ module.exports = {
                 let level = parseInt(req[0].level);
                 let rank = leaderboard.findIndex(r => r.user === user.id) +1;
                 let need = (level + 1) * 1000; // ((level + 1) * 1000) - xp
-                let imagePath = Path.join(__dirname, "../public/img/Landscape-Color.jpg");
+                let imagePath = Path.join(__dirname, "../public/img/Rank.jpg");
                 let fontPath = Path.join(__dirname, "../src/fonts/Agbalumo-Regular.ttf");
 
                 let Card = await new Canvas.Card()

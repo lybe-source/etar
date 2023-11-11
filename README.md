@@ -8,7 +8,8 @@
 - [Init npm](https://github.com/lybe-source/etar/tree/main#initialiser-npm)
 - [Version](https://github.com/lybe-source/etar/tree/main#conna%C3%AEtre-la-version-de-la-librairie-discordjs)
 - [Run Bot](https://github.com/lybe-source/etar/tree/main#d%C3%A9marrer-le-code)
-- [Commands available](https://github.com/lybe-source/etar/tree/main#liste-des-commandes-disponibles)
+- [Commands available - Moderation](https://github.com/lybe-source/etar/tree/main#liste-des-commandes-disponibles-mod%C3%A9ration)
+- [Commands available - Everyone](https://github.com/lybe-source/etar/tree/main#liste-des-commandes-disponibles-everyone)
 - [Dependencies](https://github.com/lybe-source/etar/tree/main#dependencies)
 
 ---
@@ -56,32 +57,6 @@ node main
 | help     | command OR null      |                      |                | Display the commands available and a little description                                          |
 | rank     | username OR userID   |                      |                | Displays experience and experience needed to progress to the next level                          |
 | leaderboard |                   |                      |                | Displays the top 10 in the experience leaderboard on the server                                  |
-
-### Ping
-Donne la latence du bot
-
-### Kick
-Exclu le membre si les permissions sont valides et si le membre à exclure se trouve bien sur le serveur
-
-### Ban
-Ban le membre si les permissions sont valides (Même un membre qui ne se trouve pas sur le serveur)
-
-### Unban
-Déban le membre si les permission sont valides
-
-### Mute
-Empêche le membre d'écrire des messages, de réagir aux messages, de rejoindre un salon vocal pendant une durée maximale de 28 jours (28d)
-Par contre il voit toujours le serveur et les messages postés
-
-### Unmute
-Unmute un membre qui a été mute
-
-### Clear
-Supprime le nombre de messages spécifié dans la commande dans le channel spécifié lui aussi dans la commande
-Il ne peut pas supprimé les messages datant de plus de 14 jours et il ne supprime pas ces propres messages
-
-### Help
-Affiche un embed des commandes disponibles
 
 ---
 

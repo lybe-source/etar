@@ -6,6 +6,25 @@ module.exports = async (bot, message) => {
 
     if (message.author.bot || message.channel.type === Discord.ChannelType.DM) return;
 
+    const insertQuery = "INSERT INTO server (guild, captcha) VALUES (?, ?)";
+    const insertValues = [message.guildId, false];
+
+    db.query(`SELECT * FROM server WHERE guild = '${message.guildId}'`, async (err, req) => {
+
+        if (req.length < 1) {
+
+            db.query(insertQuery, insertValues, (err) => {
+
+                if (err) {
+                    console.error("Erreur lors de l'insertion des données : ", err);
+                } else {
+                    console.log("Données insérées avec succès !");
+                }
+
+            });
+        }
+    });
+
     db.query(`SELECT * FROM experience WHERE guild = '${message.guildId}' AND user = '${message.author.id}'`, async (err, req) => {
 
         if (req.length < 1) {

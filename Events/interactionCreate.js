@@ -12,6 +12,13 @@ module.exports = async (bot, interaction) => {
             let choices = bot.commands.filter(cmd => cmd.name.includes(entry));
             await interaction.respond(entry === "" ? bot.commands.map(cmd => ({name: cmd.name, value: cmd.name})) : choices.map(choice => ({name: choice.name, value: choice.name})));
         }
+
+        if (interaction.commandName === "setcaptcha") {
+            
+            let choices = ["on", "off"];
+            let output = choices.filter(c => c.includes(entry));
+            await interaction.respond(entry === "" ? output.map(c => ({name: c, value: c})) : output.map(c => ({name: c, value: c})));
+        }
     }
 
     if (interaction.type === Discord.InteractionType.ApplicationCommand) {

@@ -9,6 +9,7 @@ bot.commands = new Discord.Collection();
 bot.color = "#FFFFFF";
 bot.function = {
     createId: require("./Functions/createID"),
+    generateCaptcha: require("./Functions/generateCaptcha"),
 }
 
 // Do this bot online

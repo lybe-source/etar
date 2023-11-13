@@ -12,6 +12,7 @@
     "@discordjs/builders": "^1.6.5",
     "@discordjs/collection": "^1.5.3",
     "@discordjs/rest": "^2.0.1",
+    "canvas": "^2.11.2",
     "discord-canvas-easy": "^3.2.1",
     "discord.js": "^14.13.0",
     "fs": "^0.0.1-security",

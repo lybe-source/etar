@@ -94,8 +94,14 @@ npm i ms
 npm i mysql
 ```
 
-### Canvas
+### Canvas-Easy
 
 ```bash
 npm i discord-canvas-easy@latest
+```
+
+### Canvas
+
+```bash
+npm i canvas
 ```

@@ -36,6 +36,12 @@ node main
 
 ---
 
+## Liste des commandes disponibles (Administration)
+
+| Command    | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                         |
+|:-----------|:--------------------:|:--------------------:|:--------------:|:---------------------------------------------------------------------------------------------------:|
+| setcaptcha | on or off            | channel or channelID |                | Set the captcha in the server, if the member takes too long or fails the captcha, it will be kicked |
+
 ## Liste des commandes disponibles (Modération)
 
 | Command  | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |

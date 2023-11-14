@@ -4,8 +4,8 @@ module.exports = async (bot, guild) => {
 
     let db = bot.db;
 
-    const insertQuery = "INSERT INTO server (guild, captcha) VALUES (?, ?)";
-    const insertValues = [guild.id, false];
+    const insertQuery = "INSERT INTO server (guild, captcha, antiraid) VALUES (?, ?, ?)";
+    const insertValues = [guild.id, 'false', 'false'];
 
     db.query(`SELECT * FROM server WHERE guild = '${guild.id}'`, async (err, req) => {
 

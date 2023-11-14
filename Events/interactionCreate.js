@@ -13,7 +13,7 @@ module.exports = async (bot, interaction) => {
             await interaction.respond(entry === "" ? bot.commands.map(cmd => ({name: cmd.name, value: cmd.name})) : choices.map(choice => ({name: choice.name, value: choice.name})));
         }
 
-        if (interaction.commandName === "setcaptcha") {
+        if (interaction.commandName === "setcaptcha" || interaction.commandName === "setantiraid") {
             
             let choices = ["on", "off"];
             let output = choices.filter(c => c.includes(entry));

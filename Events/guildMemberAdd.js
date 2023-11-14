@@ -4,12 +4,20 @@ module.exports = async (bot, member) => {
 
     let db = bot.db;
 
-    const insertQuery = "INSERT INTO server (guild, captcha) VALUES (?, ?)";
-    const insertValues = [guild.id, false];
+    const insertQuery = "INSERT INTO server (guild, captcha, antiraid) VALUES (?, ?, ?)";
+    const insertValues = [guild.id, 'false', 'false'];
 
     db.query(`SELECT * FROM server WHERE guild = '${member.guild.id}'`, async (err, req) => {
 
-        if (req.length < 1 || Boolean(req[0].captcha) === false) return;
+        if (req.length < 1) return;
+
+        if (req[0].antiraid === "true") {
+
+            try { await member.user.send("Vous ne pouvez pas rejoindre ce serveur car il est en mode antiraid ! Veuillez réessayer plus tard, merci."); } catch (err) {}
+            await member.kick("Antiraid actif");
+        }
+
+        if (req[0].captcha === "false") return;
 
         let channel = member.guild.channels.cache.get(req[0].captcha);
         if (!channel) return;
@@ -22,12 +30,12 @@ module.exports = async (bot, member) => {
 
         let captcha = await bot.function.generateCaptcha();
 
-        let msg = await channel.send({content: `${member}, vous avez 2 minutes pour compléter le captcha ! Si vous ne le réussissez pas, vous serez exclu du serveur !`, files: [new Discord.AttachmentBuilder((await captcha.canvas).toBuffer(), {name: "captcha.png"})]});
+        let msg = await channel.send({content: `${member}, vous avez 5 minutes pour compléter le captcha ! Si vous ne le réussissez pas, vous serez exclu du serveur !`, files: [new Discord.AttachmentBuilder((await captcha.canvas).toBuffer(), {name: "captcha.png"})]});
 
         try {
 
             let filter = m => m.author.id === member.user.id;
-            let response = (await channel.awaitMessages({filter, max : 1, time: 120000, errors: ["time"]})).first();
+            let response = (await channel.awaitMessages({filter, max : 1, time: 300000, errors: ["time"]})).first();
 
             if (response.content === captcha.text) {
 

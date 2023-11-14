@@ -6,8 +6,8 @@ module.exports = async (bot, message) => {
 
     if (message.author.bot || message.channel.type === Discord.ChannelType.DM) return;
 
-    const insertQuery = "INSERT INTO server (guild, captcha) VALUES (?, ?)";
-    const insertValues = [message.guildId, false];
+    const insertQuery = "INSERT INTO server (guild, captcha, antiraid) VALUES (?, ?, ?)";
+    const insertValues = [message.guildId, 'false', 'false'];
 
     db.query(`SELECT * FROM server WHERE guild = '${message.guildId}'`, async (err, req) => {
 

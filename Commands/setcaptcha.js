@@ -17,7 +17,7 @@ module.exports = {
         },
         {
             type: "channel",
-            nama: "salon",
+            name: "salon",
             description: "Salon du captcha (renseigné si on)",
             required: true,
             autocomplete: false,

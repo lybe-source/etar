@@ -58,12 +58,13 @@ node main
 
 ## Liste des commandes disponibles (Everyone)
 
-| Command  | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |
-|:---------|:--------------------:|:--------------------:|:--------------:|:------------------------------------------------------------------------------------------------:|
-| ping     |                      |                      |                | Gives bot latency                                                                                |
-| help     | command OR null      |                      |                | Display the commands available and a little description                                          |
-| rank     | username OR userID   |                      |                | Displays experience and experience needed to progress to the next level                          |
-| leaderboard |                   |                      |                | Displays the top 10 in the experience leaderboard on the server                                  |
+| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |
+|:------------|:--------------------:|:--------------------:|:--------------:|:------------------------------------------------------------------------------------------------:|
+| ping        |                      |                      |                | Gives bot latency                                                                                |
+| help        | command OR null      |                      |                | Display the commands available and a little description                                          |
+| rank        | username OR userID   |                      |                | Displays experience and experience needed to progress to the next level                          |
+| leaderboard |                      |                      |                | Displays the top 10 in the experience leaderboard on the server                                  |
+| ticket      |                      |                      |                | Create a button, while a member click this, a channel will be create                             |
 
 ---
 

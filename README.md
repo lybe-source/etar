@@ -42,6 +42,7 @@ node main
 |:------------|:--------------------:|:--------------------:|:--------------:|:---------------------------------------------------------------------------------------------------:|
 | setcaptcha  | on or off            | channel or channelID |                | Set the captcha in the server, if the member takes too long or fails the captcha, it will be kicked |
 | setantiraid | on or off            |                      |                | Set the antiraid in the server, if this is on, no member will be able to join the server            |
+| setstatus   | activity             | status               | url            | Set the status of the bot, choice in the activity list, for streaming activity, the url is required (twitch.tv) |
 
 ## Liste des commandes disponibles (Modération)
 
@@ -55,6 +56,8 @@ node main
 | clear    | channel OR channelID | number : 1 => 100    |                | Deletes number messages in the channel defined in the command as long as they aren't 14 days old |
 | warn     | username OR userID   | reason               |                | Give a warning to a member and record it in the database                                         |
 | warnlist | username OR userID   |                      |                | Display the warnings for the member defined in the command                                       |
+| lock     | channel              | role                 |                | Prevents the indicate role from writing and sending files in the indicate channel                |
+| unlock   | channel              | role                 |                | allows the indicate role to write and send files in the indicate channel                         |
 
 ## Liste des commandes disponibles (Everyone)
 

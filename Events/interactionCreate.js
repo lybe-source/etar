@@ -11,6 +11,7 @@ module.exports = async (bot, interaction) => {
             
             let choices = bot.commands.filter(cmd => cmd.name.includes(entry));
             await interaction.respond(entry === "" ? bot.commands.map(cmd => ({name: cmd.name, value: cmd.name})) : choices.map(choice => ({name: choice.name, value: choice.name})));
+
         }
 
         if (interaction.commandName === "setcaptcha" || interaction.commandName === "setantiraid") {
@@ -18,6 +19,15 @@ module.exports = async (bot, interaction) => {
             let choices = ["on", "off"];
             let output = choices.filter(c => c.includes(entry));
             await interaction.respond(entry === "" ? output.map(c => ({name: c, value: c})) : output.map(c => ({name: c, value: c})));
+
+        }
+
+        if (interaction.commandName === "setstatus") {
+            
+            let choices = ["Playing", "Streaming", "Listening", "Watching", "Competing"];
+            let output = choices.filter(c => c.includes(entry));
+            await interaction.respond(entry === "" ? output.map(c => ({name: c, value: c})) : output.map(c => ({name: c, value: c})));
+            
         }
     }
 

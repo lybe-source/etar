@@ -38,11 +38,12 @@ node main
 
 ## Liste des commandes disponibles (Administration)
 
-| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                         |
-|:------------|:--------------------:|:--------------------:|:--------------:|:---------------------------------------------------------------------------------------------------:|
-| setcaptcha  | on or off            | channel or channelID |                | Set the captcha in the server, if the member takes too long or fails the captcha, it will be kicked |
-| setantiraid | on or off            |                      |                | Set the antiraid in the server, if this is on, no member will be able to join the server            |
-| setstatus   | activity             | status               | url            | Set the status of the bot, choice in the activity list, for streaming activity, the url is required (twitch.tv) |
+| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Description                                                                                         |
+|:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:---------------------------------------------------------------------------------------:|
+| setcaptcha  | on or off            | channel or channelID |                |             | Set the captcha in the server, if the member takes too long or fails the captcha, it will be kicked |
+| setantiraid | on or off            |                      |                |             | Set the antiraid in the server, if this is on, no member will be able to join the server            |
+| setstatus   | activity             | status               | url            |             | Set the status of the bot, choice in the activity list, for streaming activity, the url is required (twitch.tv) |
+| setrole     | channel              | messageID            | role           | emoji       |                                           |
 
 ## Liste des commandes disponibles (Modération)
 

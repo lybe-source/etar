@@ -6,7 +6,7 @@ module.exports = {
     description: "Configurer la réaction pour attribuer un rôle",
     permission: Discord.PermissionFlagsBits.ManageRoles,
     dm: false,
-    category: "Configuration",
+    category: "Administration",
     options: [
         {
             type: "channel",

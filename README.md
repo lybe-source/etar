@@ -43,7 +43,7 @@ node main
 | setcaptcha  | on or off            | channel or channelID |                |             | Set the captcha in the server, if the member takes too long or fails the captcha, it will be kicked |
 | setantiraid | on or off            |                      |                |             | Set the antiraid in the server, if this is on, no member will be able to join the server            |
 | setstatus   | activity             | status               | url            |             | Set the status of the bot, choice in the activity list, for streaming activity, the url is required (twitch.tv) |
-| setrole     | channel              | messageID            | role           | emoji       |                                           |
+| setrole     | channel              | messageID            | role           | emoji       | Set the emoji for role reaction attached to the message in the channel |
 
 ## Liste des commandes disponibles (Modération)
 

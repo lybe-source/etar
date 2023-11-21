@@ -44,6 +44,8 @@ module.exports = async (bot, member) => {
                 try { await member.user.send("Vous avez réussi le captcha !"); } catch (err) {}
                 await channel.permissionOverwrites.delete(member.user.id);
 
+                // Peut être faire le embed pour le salon bienvenue, il faudrait peut être empêcher le message de base de s'y ajouter avant cela
+
             } else {
 
                 await msg.delete();

@@ -16,5 +16,3 @@ bot.function = {
 bot.login(config.token);
 loadCommands(bot);
 loadEvents(bot);
-
-// Reaction roles

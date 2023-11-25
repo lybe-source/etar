@@ -38,7 +38,7 @@ module.exports = {
         },
     ],
 
-    async run(bot, message, args) {
+    async run(bot, message, args, db) {
 
         try {
 
@@ -50,81 +50,140 @@ module.exports = {
             let messageID = args.getString("message");
             if (!messageID) return await message.reply({ content: "Le message spécifié n'a pas été trouvé.", ephemeral: true });
             
-            let roleID = args.getRole("role");
-            if (!roleID) return await message.reply({ content: "Le rôle spécifié n'a pas été trouvé.", ephemeral: true });
+            let role = args.getRole("role");
+            if (!role) return await message.reply({ content: "Le rôle spécifié n'a pas été trouvé.", ephemeral: true });
 
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 
+            const config = {
+                guildID: message.guild.id,
+                channelID: channel.id,
+                messageID: message.id,
+                roleID: role.id,
+                emoji: emoji
+            };
 
-            const Message = await channel.messages.fetch(messageID);
+            await insertConfigToDatabase(db, config);
 
-            // Add reaction to the message
-            Message.react(emoji);
+            const fetchedMessage = await channel.messages.fetch(messageID);
+
+            // Ajouter la réaction au message
+            await fetchedMessage.react(emoji);
 
             await message.deferReply();
-
-            // While the member click on the reaction to add it
-            bot.on('messageReactionAdd', async (reaction, user) => {
-                try {
-                    if (user.bot) return;
-        
-                    if (reaction.emoji.name === emoji) {
-                        const member = reaction.message.guild.members.cache.get(user.id);
-        
-                        // Vérifier si le membre a déjà le rôle
-                        if (!member.roles.cache.has(roleID)) {
-                            await member.roles.add(roleID);
-
-                            let Embed = new Discord.EmbedBuilder()
-                                .setColor(bot.color)
-                                .setTitle(`Ajout du rôle ${roleID.name}`)
-                                .setThumbnail(user.displayAvatarURL({dynamic: true}))
-                                .setTimestamp()
-                                .setFooter({text: `Demandé par ${user.tag}`});
-                            await message.followUp({ embeds: [Embed], ephemeral: true });
-                            return;
-                        }
-                    }
-                } catch (err) {
-                    console.error("Erreur lors de la gestion de la réaction : ", err);
-                }
-            });
-
-            // While the member click on the reaction to remove it
-            bot.on('messageReactionRemove', async (reaction, user) => {
-                try {
-                    if (user.bot) return;
-
-                    if (reaction.emoji.name === emoji) {
-                        const member = reaction.message.guild.members.cache.get(user.id);
-        
-                        console.log(roleID);
-                        // Vérifier si le membre a déjà le rôle
-                        if (member.roles.cache.has(roleID)) {
-                            // Retirer le rôle
-                            await member.roles.remove(roleID).catch(err => console.error("Erreur lors de la suppression du rôle : ", err));
-                            // await message.interaction.guild.members.cache.get(user.id).roles.remove(roleID).catch(err => console.error("Erreur lors de la suppression du rôle : ", err));
-
-                            let Embed = new Discord.EmbedBuilder()
-                                .setColor(bot.color)
-                                .setTitle(`Suppression du rôle ${roleID.name}`)
-                                .setThumbnail(user.displayAvatarURL({dynamic: true}))
-                                .setTimestamp()
-                                .setFooter({text: `Demandé par ${user.tag}`});
-                            await message.followUp({ embeds: [Embed], ephemeral: true });
-                            return;
-                        }
-                    }
-                } catch (err) {
-                    console.error("Erreur lors de la gestion de la réaction : ", err);
-                }
-            });
-
             await message.followUp("La réaction a été ajouté avec succès.");
+
+            handleReaction(bot, fetchedMessage, config);
+
         } catch (err) {
             console.error(err);
             await message.reply("Une erreur est survenue lors de la configuration de la réaction.");
         }
+    }
+}
+
+async function handleReaction (bot, message, config) {
+    const { guild } = message;
+
+    // Gérer la réaction pour attribuer le rôle
+    bot.on("messageReactionAdd", async (reaction, user) => {
+        db = bot.db;
+        const member = guild.members.cache.find(member => member.id === user.id);
+        if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
+            try {
+                const configID = await insertConfigToDatabase(db, config);
+                await insertMemberReactionToDatabase(db, configID, user.id);
+                await member.roles.add(config.roleID);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    });
+
+    // Gérer la réaction pour retirer le rôle
+    bot.on("messageReactionRemove", async (reaction, user) => {
+        db = bot.db;
+        const member = guild.members.cache.find(member => member.id === user.id);
+        if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
+            try {
+                const configID = await getConfigIDFromDatabase(db, config);
+                await removeMemberReactionFromDatabase(db, configID, user.id);
+                await member.roles.remove(config.roleID);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    })
+}
+
+async function insertConfigToDatabase (db, config) {
+    try {
+        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+        const [result] = await db.promise().query(selectQuery, selectValue);
+
+        if (result.length > 0) {
+            const configID = result[0].id;
+            console.log("Configuration trouvée. ID : ", configID);
+            return configID;
+        } else {
+            const insertQuery = "INSERT INTO `roles` (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)";
+            const insertValues = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+            const [insertResult] = await db.promise().query(insertQuery, insertValues);
+
+            const configID = insertResult.insertId;
+            console.log("Configuration insérée avec succès. ID : ", configID);
+            return configID;
+        }
+
+    } catch (err) {
+        console.error("Erreur lors de l'insertion de la configuration :", err);
+        throw err;
+    }
+}
+
+async function insertMemberReactionToDatabase (db, configID, userID) {
+    try {
+        const insertQuery = "INSERT INTO `reactions` (configID, userID) VALUES (?, ?)";
+        const insertValue = [configID, userID];
+        await db.promise().query(insertQuery, insertValue);
+
+        console.log("Réaction insérée avec succès.");
+
+    } catch (err) {
+        console.error("Erreur lors de l'insertion de la réaction :", err);
+        throw err;
+    }
+}
+
+async function removeMemberReactionFromDatabase (db, configID, userID) {
+    try {
+        const deleteQuery = "DELETE FROM `reactions` WHERE configID = ? AND userID = ?";
+        const deleteValue = [configID, userID];
+        await db.promise().query(deleteQuery, deleteValue);
+
+        console.log("Réaction supprimée avec succès.");
+
+    } catch (err) {
+        console.error("Erreur lors de la suppression de la réaction :", err);
+        throw err;
+    }
+}
+
+async function getConfigIDFromDatabase (db, config) {
+    try {
+        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+        const [result] = await db.promise().query(selectQuery, selectValue);
+
+        if (result.length > 0) {
+            return result[0].id;
+        } else {
+            throw new Error("Configuration non trouvée.");
+        }
+    } catch (err) {
+        console.error("Erreur lors de la récupération de l'ID de configuration : ", err);
+        throw err;
     }
 }

@@ -24,6 +24,13 @@ module.exports = {
         },
         {
             type: "string",
+            name: "role",
+            description: "Le rôle qui aura accès au salon",
+            required: true,
+            autocomplete: false,
+        },
+        {
+            type: "string",
             name: "emoji",
             description: "L'émoji de la réaction pour s'enregistrer dans le giveway",
             required: true,
@@ -39,6 +46,7 @@ module.exports = {
             if (!channel) return await message.reply({ content: "Le salon spécifié n'a pas été trouvé.", ephemeral: true });
             let messageContent = args.getString("message");
             if (!messageContent) return await message.reply({ content: "Aucun message n'a été indiqué !", ephemeral: true });
+            let role = args.getString("role");
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 
@@ -46,6 +54,7 @@ module.exports = {
                 guildID: message.guild.id,
                 channelID: channel.id,
                 messageID: message.id,
+                roleID: role.id,
                 emoji: emoji
             };
 
@@ -56,6 +65,8 @@ module.exports = {
             await message.deferReply();
             await message.followUp("La réaction a été ajouté avec succès.");
 
+            changePermissionsOverwrites(channel, role);
+
             handleReaction(bot, config);
 
         } catch (err) {
@@ -65,6 +76,14 @@ module.exports = {
 
         }
     }
+}
+
+async function changePermissionsOverwrites (channel, role) {
+
+    await channel.permissionOverwrites.create(role.id, {
+        ViewChannel: true,
+        ReadMessageHistory: true,
+    });
 }
 
 async function handleReaction (bot, config) {
@@ -104,8 +123,8 @@ async function handleReaction (bot, config) {
 
 async function insertGivewayToDatabase (db, config) {
     try {
-        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND emoji = ?";
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.emoji];
+        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 
         if (result.length > 0) {
@@ -113,8 +132,8 @@ async function insertGivewayToDatabase (db, config) {
             console.log("Giveway trouvée. ID : ", configID);
             return configID;
         } else {
-            const insertQuery = "INSERT INTO `giveway` (guildID, channelID, messageID, emoji) VALUES (?, ?, ?, ?)";
-            const insertValues = [config.guildID, config.channelID, config.messageID, config.emoji];
+            const insertQuery = "INSERT INTO `giveway` (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)";
+            const insertValues = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
             const [insertResult] = await db.promise().query(insertQuery, insertValues);
 
             const configID = insertResult.insertId;
@@ -158,8 +177,8 @@ async function removeMemberReactionFromDatabase (db, configID, userID) {
 
 async function getConfigIDFromDatabase (db, config) {
     try {
-        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND emoji = ?";
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.emoji];
+        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 
         if (result.length > 0) {

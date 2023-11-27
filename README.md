@@ -60,6 +60,11 @@ node main
 | lock     | channel              | role                 |                | Prevents the indicate role from writing and sending files in the indicate channel                |
 | unlock   | channel              | role                 |                | allows the indicate role to write and send files in the indicate channel                         |
 
+## Liste des commandes pour les évènements
+| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Description                                                                             |
+|:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:---------------------------------------------------------------------------------------:|
+| setgiveway  | channel              | message              | emoji          |             | Set a giveway in the indicate channel, the message will be send by the bot with the emoji as reaction |
+
 ## Liste des commandes disponibles (Everyone)
 
 | Command     | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |

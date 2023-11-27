@@ -2,37 +2,30 @@ const Discord = require("discord.js");
 
 module.exports = {
 
-    name: "setrole",
-    description: "Configurer la réaction pour attribuer un rôle",
-    permission: Discord.PermissionFlagsBits.ManageRoles,
+    name: "setgiveway",
+    description: "Préparer un giveway",
+    permission: Discord.PermissionFlagsBits.ManageMessages,
     dm: false,
-    category: "Administration",
+    category: "Évênement",
     options: [
         {
             type: "channel",
             name: "salon",
-            description: "Le salon du message",
+            description: "Le salon dans lequel lancer le giveway",
             required: true,
             autocomplete: false,
         },
         {
             type: "string",
             name: "message",
-            description: "L'identifiant du message",
-            required: true,
-            autocomplete: false,
-        },
-        {
-            type: "role",
-            name: "role",
-            description: "Le rôle à attribuer",
+            description: "Le message du giveway",
             required: true,
             autocomplete: false,
         },
         {
             type: "string",
             name: "emoji",
-            description: "L'émoji de la réaction",
+            description: "L'émoji de la réaction pour s'enregistrer dans le giveway",
             required: true,
             autocomplete: false,
         },
@@ -44,15 +37,8 @@ module.exports = {
 
             let channel = args.getChannel("salon");
             if (!channel) return await message.reply({ content: "Le salon spécifié n'a pas été trouvé.", ephemeral: true });
-            channel = message.guild.channels.cache.get(channel.id);
-            if (!channel) return message.reply({ content: "Pas de salon trouvé !", ephemeral: true });
-
-            let messageID = args.getString("message");
-            if (!messageID) return await message.reply({ content: "Le message spécifié n'a pas été trouvé.", ephemeral: true });
-            
-            let role = args.getRole("role");
-            if (!role) return await message.reply({ content: "Le rôle spécifié n'a pas été trouvé.", ephemeral: true });
-
+            let messageContent = args.getString("message");
+            if (!messageContent) return await message.reply({ content: "Aucun message n'a été indiqué !", ephemeral: true });
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 
@@ -60,39 +46,38 @@ module.exports = {
                 guildID: message.guild.id,
                 channelID: channel.id,
                 messageID: message.id,
-                roleID: role.id,
                 emoji: emoji
             };
 
-            await insertConfigToDatabase(db, config);
+            await insertGivewayToDatabase(db, config);
 
-            const fetchedMessage = await channel.messages.fetch(messageID);
-
-            // Ajouter la réaction au message
-            await fetchedMessage.react(emoji);
+            await messageContent.react(emoji);
 
             await message.deferReply();
             await message.followUp("La réaction a été ajouté avec succès.");
 
-            handleReaction(bot, fetchedMessage, config);
+            handleReaction(bot, config);
 
         } catch (err) {
+
             console.error(err);
-            await message.reply("Une erreur est survenue lors de la configuration de la réaction.");
+            await message.reply("Une erreur est survenue lors de la configuration du giveway.");
+
         }
     }
 }
 
-async function handleReaction (bot, message, config) {
+async function handleReaction (bot, config) {
+
     const { guild } = message;
 
     // Gérer la réaction pour attribuer le rôle
     bot.on("messageReactionAdd", async (reaction, user) => {
         db = bot.db;
         const member = guild.members.cache.find(member => member.id === user.id);
-        if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
+        if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
             try {
-                const configID = await insertConfigToDatabase(db, config);
+                const configID = await insertGivewayToDatabase(db, config);
                 await insertMemberReactionToDatabase(db, configID, user.id);
                 await member.roles.add(config.roleID);
             } catch (err) {
@@ -105,7 +90,7 @@ async function handleReaction (bot, message, config) {
     bot.on("messageReactionRemove", async (reaction, user) => {
         db = bot.db;
         const member = guild.members.cache.find(member => member.id === user.id);
-        if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
+        if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
             try {
                 const configID = await getConfigIDFromDatabase(db, config);
                 await removeMemberReactionFromDatabase(db, configID, user.id);
@@ -117,35 +102,35 @@ async function handleReaction (bot, message, config) {
     })
 }
 
-async function insertConfigToDatabase (db, config) {
+async function insertGivewayToDatabase (db, config) {
     try {
-        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 
         if (result.length > 0) {
             const configID = result[0].id;
-            console.log("Configuration trouvée. ID : ", configID);
+            console.log("Giveway trouvée. ID : ", configID);
             return configID;
         } else {
-            const insertQuery = "INSERT INTO `roles` (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)";
-            const insertValues = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+            const insertQuery = "INSERT INTO `giveway` (guildID, channelID, messageID, emoji) VALUES (?, ?, ?, ?)";
+            const insertValues = [config.guildID, config.channelID, config.messageID, config.emoji];
             const [insertResult] = await db.promise().query(insertQuery, insertValues);
 
             const configID = insertResult.insertId;
-            console.log("Configuration insérée avec succès. ID : ", configID);
+            console.log("Giveway insérée avec succès. ID : ", configID);
             return configID;
         }
 
     } catch (err) {
-        console.error("Erreur lors de l'insertion de la configuration :", err);
+        console.error("Erreur lors de l'insertion du giveway :", err);
         throw err;
     }
 }
 
 async function insertMemberReactionToDatabase (db, configID, userID) {
     try {
-        const insertQuery = "INSERT INTO `reactions_role` (configID, userID) VALUES (?, ?)";
+        const insertQuery = "INSERT INTO `reactions_giveway` (configID, userID) VALUES (?, ?)";
         const insertValue = [configID, userID];
         await db.promise().query(insertQuery, insertValue);
 
@@ -159,7 +144,7 @@ async function insertMemberReactionToDatabase (db, configID, userID) {
 
 async function removeMemberReactionFromDatabase (db, configID, userID) {
     try {
-        const deleteQuery = "DELETE FROM `reactions_role` WHERE configID = ? AND userID = ?";
+        const deleteQuery = "DELETE FROM `reactions_giveway` WHERE configID = ? AND userID = ?";
         const deleteValue = [configID, userID];
         await db.promise().query(deleteQuery, deleteValue);
 
@@ -173,8 +158,8 @@ async function removeMemberReactionFromDatabase (db, configID, userID) {
 
 async function getConfigIDFromDatabase (db, config) {
     try {
-        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
+        const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND emoji = ?";
+        const selectValue = [config.guildID, config.channelID, config.messageID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 
         if (result.length > 0) {

@@ -1,92 +1,13 @@
 const Discord = require("discord.js");
+// Devrait adapter les fonctions pour qu'elles acceptent dans les insertions et chargement de données en base de donnée des tables indiqué par les constantes de commande
+// exemple :
+// const TABLE = ["roles", "reactions_role", "giveway", "reactions_giveway"];
 
-module.exports = {
-
-    name: "setgiveway",
-    description: "Préparer un giveway",
-    permission: Discord.PermissionFlagsBits.ManageMessages,
-    dm: false,
-    category: "Évênement",
-    options: [
-        {
-            type: "channel",
-            name: "salon",
-            description: "Le salon où lancer le giveway",
-            required: true,
-            autocomplete: false,
-        },
-        {
-            type: "string",
-            name: "message",
-            description: "Le message du giveway",
-            required: true,
-            autocomplete: false,
-        },
-        {
-            type: "role",
-            name: "role",
-            description: "Le rôle qui aura accès au salon",
-            required: true,
-            autocomplete: false,
-        },
-        {
-            type: "string",
-            name: "emoji",
-            description: "La réaction pour le giveway",
-            required: true,
-            autocomplete: false,
-        },
-    ],
-
-    async run(bot, message, args, db) {
-
-        try {
-
-            let channel = args.getChannel("salon");
-            if (!channel) return await message.reply({ content: "Le salon spécifié n'a pas été trouvé.", ephemeral: true });
-            let messageContent = args.getString("message");
-            if (!messageContent) return await message.reply({ content: "Aucun message n'a été indiqué !", ephemeral: true });
-            let role = args.getRole("role");
-            if (!role) return await message.reply({ content: "Le rôle spécifié n'a pas été trouvé.", ephemeral: true });
-            let emoji = args.getString("emoji");
-            if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
-
-            const config = {
-                guildID: message.guild.id,
-                channelID: channel.id,
-                messageID: message.id,
-                roleID: role.id,
-                emoji: emoji
-            };
-
-            await insertGivewayToDatabase(db, config);
-
-            await messageContent.react(emoji);
-
-            await message.deferReply();
-            await message.followUp("La réaction a été ajouté avec succès.");
-
-            await changePermissionsOverwrites(channel, role);
-
-            await handleReaction(bot, config);
-
-        } catch (err) {
-
-            console.error(err);
-            await message.reply("Une erreur est survenue lors de la configuration du giveway.");
-
-        }
-    }
-}
-
-async function changePermissionsOverwrites (channel, role) {
-
-    await channel.permissionOverwrites.create(role.id, {
-        ViewChannel: true,
-        ReadMessageHistory: true,
-    });
-}
-
+/**
+ * 
+ * @param {Discord.Client} bot 
+ * @param {Array} config 
+ */
 async function handleReaction (bot, config) {
 
     const { guild } = message;
@@ -122,7 +43,7 @@ async function handleReaction (bot, config) {
     })
 }
 
-async function insertGivewayToDatabase (db, config) {
+async function insertConfigToDatabase (db, config) {
     try {
         const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
         const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
@@ -192,3 +113,5 @@ async function getConfigIDFromDatabase (db, config) {
         throw err;
     }
 }
+
+module.exports = (handleReaction, insertConfigToDatabase, insertMemberReactionToDatabase, removeMemberReactionFromDatabase, getConfigIDFromDatabase);

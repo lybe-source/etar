@@ -47,6 +47,7 @@ module.exports = {
             let messageContent = args.getString("message");
             if (!messageContent) return await message.reply({ content: "Aucun message n'a été indiqué !", ephemeral: true });
             let role = args.getRole("role");
+            if (!role) return await message.reply({ content: "Le rôle spécifié n'a pas été trouvé.", ephemeral: true });
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 

@@ -10,6 +10,7 @@ bot.color = "#FFFFFF";
 bot.function = {
     createId: require("./Functions/createID"),
     generateCaptcha: require("./Functions/generateCaptcha"),
+    searchSpam: require("./Functions/searchSpam"),
 }
 
 // Do this bot online

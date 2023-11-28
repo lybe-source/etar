@@ -6,8 +6,8 @@ module.exports = async (bot, message) => {
 
     if (message.author.bot || message.channel.type === Discord.ChannelType.DM) return;
 
-    const insertQuery = "INSERT INTO server (guild, captcha, antiraid) VALUES (?, ?, ?)";
-    const insertValues = [message.guildId, 'false', 'false'];
+    const insertQuery = "INSERT INTO server (guild, captcha, antiraid, antispam) VALUES (?, ?, ?, ?)";
+    const insertValues = [message.guildId, 'false', 'false', 'false'];
 
     db.query(`SELECT * FROM server WHERE guild = '${message.guildId}'`, async (err, req) => {
 
@@ -23,6 +23,9 @@ module.exports = async (bot, message) => {
 
             });
         }
+
+        if (req[0].antispam === "true") await bot.function.searchSpam(message);
+        
     });
 
     db.query(`SELECT * FROM experience WHERE guild = '${message.guildId}' AND user = '${message.author.id}'`, async (err, req) => {

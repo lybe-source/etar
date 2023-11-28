@@ -61,14 +61,15 @@ module.exports = {
 
             await insertGivewayToDatabase(db, config);
 
-            await messageContent.react(emoji);
+            let message = await channel.message.send(messageContent);
+            await message.react(emoji);
 
             await message.deferReply();
             await message.followUp("La réaction a été ajouté avec succès.");
 
             await changePermissionsOverwrites(channel, role);
 
-            await handleReaction(bot, config);
+            await handleReaction(bot, message, config);
 
         } catch (err) {
 
@@ -87,7 +88,7 @@ async function changePermissionsOverwrites (channel, role) {
     });
 }
 
-async function handleReaction (bot, config) {
+async function handleReaction (bot, message, config) {
 
     const { guild } = message;
 

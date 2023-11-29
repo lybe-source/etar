@@ -61,15 +61,15 @@ module.exports = {
 
             await insertGivewayToDatabase(db, config);
 
-            let message = await channel.message.send(messageContent);
-            await message.react(emoji);
+            let messageBOT = await channel.send(messageContent);
+            await messageBOT.react(emoji);
 
             await message.deferReply();
             await message.followUp("La réaction a été ajouté avec succès.");
 
             await changePermissionsOverwrites(channel, role);
 
-            await handleReaction(bot, message, config);
+            handleReaction(bot, messageBOT, config);
 
         } catch (err) {
 
@@ -89,38 +89,47 @@ async function changePermissionsOverwrites (channel, role) {
 }
 
 async function handleReaction (bot, message, config) {
+    return new Promise((resolve, reject) => {
+        const { guild } = message;
 
-    const { guild } = message;
+        console.log("Gestion des réactions activée !");
 
-    // Gérer la réaction pour attribuer le rôle
-    bot.on("messageReactionAdd", async (reaction, user) => {
-        db = bot.db;
-        const member = guild.members.cache.find(member => member.id === user.id);
-        if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
-            try {
-                const configID = await insertGivewayToDatabase(db, config);
-                await insertMemberReactionToDatabase(db, configID, user.id);
-                await member.roles.add(config.roleID);
-            } catch (err) {
-                console.error(err);
+        // Gérer la réaction pour attribuer le rôle
+        bot.on("messageReactionAdd", async (reaction, user) => {
+            console.log("Réaction ajoutée à un message !");
+            let db = bot.db;
+            const member = guild.members.cache.find(member => member.id === user.id);
+            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
+                try {
+                    console.log("Réaction added !");
+                    const configID = await insertGivewayToDatabase(db, config);
+                    await insertMemberReactionToDatabase(db, configID, user.id);
+                    resolve();
+                } catch (err) {
+                    console.error(err);
+                    reject(err);
+                }
             }
-        }
+        });
+
+        // Gérer la réaction pour retirer le rôle
+        bot.on("messageReactionRemove", async (reaction, user) => {
+            console.log("Réaction supprimée à un message !");
+            let db = bot.db;
+            const member = guild.members.cache.find(member => member.id === user.id);
+            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
+                try {
+                    console.log("Réaction removed !");
+                    const configID = await getConfigIDFromDatabase(db, config);
+                    await removeMemberReactionFromDatabase(db, configID, user.id);
+                    resolve();
+                } catch (err) {
+                    console.error(err);
+                    reject(err);
+                }
+            }
+        })
     });
-
-    // Gérer la réaction pour retirer le rôle
-    bot.on("messageReactionRemove", async (reaction, user) => {
-        db = bot.db;
-        const member = guild.members.cache.find(member => member.id === user.id);
-        if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
-            try {
-                const configID = await getConfigIDFromDatabase(db, config);
-                await removeMemberReactionFromDatabase(db, configID, user.id);
-                await member.roles.remove(config.roleID);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    })
 }
 
 async function insertGivewayToDatabase (db, config) {
@@ -151,6 +160,7 @@ async function insertGivewayToDatabase (db, config) {
 
 async function insertMemberReactionToDatabase (db, configID, userID) {
     try {
+        console.log("Essayons d'inserer la réaction");
         const insertQuery = "INSERT INTO `reactions_giveway` (configID, userID) VALUES (?, ?)";
         const insertValue = [configID, userID];
         await db.promise().query(insertQuery, insertValue);
@@ -159,12 +169,15 @@ async function insertMemberReactionToDatabase (db, configID, userID) {
 
     } catch (err) {
         console.error("Erreur lors de l'insertion de la réaction :", err);
+        console.error("SQL Error :", err.sql);
+        console.error("SQL Error Code :", err.code);
         throw err;
     }
 }
 
 async function removeMemberReactionFromDatabase (db, configID, userID) {
     try {
+        console.log("Essayons de supprimer la réaction");
         const deleteQuery = "DELETE FROM `reactions_giveway` WHERE configID = ? AND userID = ?";
         const deleteValue = [configID, userID];
         await db.promise().query(deleteQuery, deleteValue);
@@ -179,6 +192,7 @@ async function removeMemberReactionFromDatabase (db, configID, userID) {
 
 async function getConfigIDFromDatabase (db, config) {
     try {
+        console.log("Essayons de récupérer la config");
         const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
         const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);

@@ -88,7 +88,7 @@ async function handleReaction (bot, message, config) {
 
     // Gérer la réaction pour attribuer le rôle
     bot.on("messageReactionAdd", async (reaction, user) => {
-        db = bot.db;
+        let db = bot.db;
         const member = guild.members.cache.find(member => member.id === user.id);
         if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
             try {
@@ -103,7 +103,7 @@ async function handleReaction (bot, message, config) {
 
     // Gérer la réaction pour retirer le rôle
     bot.on("messageReactionRemove", async (reaction, user) => {
-        db = bot.db;
+        let db = bot.db;
         const member = guild.members.cache.find(member => member.id === user.id);
         if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
             try {

@@ -51,21 +51,22 @@ module.exports = {
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 
+            let messageBOT = await channel.send(messageContent);
+
             const config = {
                 guildID: message.guild.id,
                 channelID: channel.id,
-                messageID: message.id,
+                messageID: messageBOT.id,
                 roleID: role.id,
                 emoji: emoji
             };
 
             await insertGivewayToDatabase(db, config);
 
-            let messageBOT = await channel.send(messageContent);
             await messageBOT.react(emoji);
 
             await message.deferReply();
-            await message.followUp("La réaction a été ajouté avec succès.");
+            await message.followUp(`:white_check_mark: La réaction a été ajouté avec succès.`);
 
             await changePermissionsOverwrites(channel, role);
 
@@ -74,7 +75,7 @@ module.exports = {
         } catch (err) {
 
             console.error(err);
-            await message.reply("Une erreur est survenue lors de la configuration du giveway.");
+            await message.reply(`:no_entry: Une erreur est survenue lors de la configuration du giveway.`);
 
         }
     }
@@ -96,12 +97,10 @@ async function handleReaction (bot, message, config) {
 
         // Gérer la réaction pour attribuer le rôle
         bot.on("messageReactionAdd", async (reaction, user) => {
-            console.log("Réaction ajoutée à un message !");
             let db = bot.db;
             const member = guild.members.cache.find(member => member.id === user.id);
-            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
+            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) { // Le problème doit se situer ici
                 try {
-                    console.log("Réaction added !");
                     const configID = await insertGivewayToDatabase(db, config);
                     await insertMemberReactionToDatabase(db, configID, user.id);
                     resolve();
@@ -114,12 +113,10 @@ async function handleReaction (bot, message, config) {
 
         // Gérer la réaction pour retirer le rôle
         bot.on("messageReactionRemove", async (reaction, user) => {
-            console.log("Réaction supprimée à un message !");
             let db = bot.db;
             const member = guild.members.cache.find(member => member.id === user.id);
             if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
                 try {
-                    console.log("Réaction removed !");
                     const configID = await getConfigIDFromDatabase(db, config);
                     await removeMemberReactionFromDatabase(db, configID, user.id);
                     resolve();
@@ -160,7 +157,6 @@ async function insertGivewayToDatabase (db, config) {
 
 async function insertMemberReactionToDatabase (db, configID, userID) {
     try {
-        console.log("Essayons d'inserer la réaction");
         const insertQuery = "INSERT INTO `reactions_giveway` (configID, userID) VALUES (?, ?)";
         const insertValue = [configID, userID];
         await db.promise().query(insertQuery, insertValue);
@@ -177,7 +173,6 @@ async function insertMemberReactionToDatabase (db, configID, userID) {
 
 async function removeMemberReactionFromDatabase (db, configID, userID) {
     try {
-        console.log("Essayons de supprimer la réaction");
         const deleteQuery = "DELETE FROM `reactions_giveway` WHERE configID = ? AND userID = ?";
         const deleteValue = [configID, userID];
         await db.promise().query(deleteQuery, deleteValue);
@@ -192,7 +187,6 @@ async function removeMemberReactionFromDatabase (db, configID, userID) {
 
 async function getConfigIDFromDatabase (db, config) {
     try {
-        console.log("Essayons de récupérer la config");
         const selectQuery = "SELECT id FROM `giveway` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
         const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);

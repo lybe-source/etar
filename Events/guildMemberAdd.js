@@ -14,6 +14,29 @@ module.exports = async (bot, member) => {
             await member.kick("Antiraid actif");
         }
 
+        if (req[0].welchannel === "false") return;
+
+        const selectQuery = "SELECT `welchannel` FROM `server` WHERE guild = ?";
+        const selectValue = [member.guild.id];
+        const channelID = await db.promise().query(selectQuery, selectValue);
+        if (channelID === 'false') return;
+        
+        const welChannel = member.guild.channels.cache.get(req[0].welchannel);
+        
+        const Embed = new Discord.EmbedBuilder()
+            .setColor(`${member.displayHexColor}`)
+            .setTitle("Bienvenue à toi")
+            .setAuthor({ 
+                    name: member.user.tag, 
+                    // iconURL: member.user.displayAvatarURL({dynamic: true}) 
+                })
+            // .setDescription("Bienvenue à toi")
+            .setThumbnail({ URL: member.user.displayAvatarURL({ dynamic: true, size: 4096 }) })
+            .setTimestamp()
+            .setFooter({ text: `ID: ${member.id}` })
+            ;
+        if (welChannel) await welChannel.send({ embeds: [Embed] });
+
         if (req[0].captcha === "false") return;
 
         let channel = member.guild.channels.cache.get(req[0].captcha);
@@ -40,8 +63,6 @@ module.exports = async (bot, member) => {
                 await response.delete();
                 try { await member.user.send("Vous avez réussi le captcha !"); } catch (err) {}
                 await channel.permissionOverwrites.delete(member.user.id);
-
-                // Peut être faire le embed pour le salon bienvenue, il faudrait peut être empêcher le message de base de s'y ajouter avant cela
 
             } else {
 

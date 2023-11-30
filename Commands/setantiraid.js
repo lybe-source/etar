@@ -25,12 +25,12 @@ module.exports = {
         if (etat === "off") {
 
             db.query(`UPDATE server SET antiraid = 'false' WHERE guild = '${message.guildId}'`);
-            await message.reply("L'antiraid est bien désactivé !");
+            await message.reply(`:white_check_mark: L'antiraid est bien désactivé !`);
 
         } else {
 
             db.query(`UPDATE server SET antiraid = 'true' WHERE guild = '${message.guildId}'`);
-            await message.reply(`L'antiraid est bien activé sur le serveur !`);
+            await message.reply(`:white_check_mark: L'antiraid est bien activé sur le serveur !`);
 
         }
     }

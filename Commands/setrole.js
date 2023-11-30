@@ -72,13 +72,13 @@ module.exports = {
             await fetchedMessage.react(emoji);
 
             await message.deferReply();
-            await message.followUp("La réaction a été ajouté avec succès.");
+            await message.followUp(`:white_check_mark: La réaction a été ajouté avec succès.`);
 
             handleReaction(bot, fetchedMessage, config);
 
         } catch (err) {
             console.error(err);
-            await message.reply("Une erreur est survenue lors de la configuration de la réaction.");
+            await message.reply(`:no_entry: Une erreur est survenue lors de la configuration de la réaction.`);
         }
     }
 }

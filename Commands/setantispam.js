@@ -25,12 +25,12 @@ module.exports = {
         if (etat === "off") {
 
             db.query(`UPDATE server SET antispam = 'false' WHERE guild = '${message.guildId}'`);
-            await message.reply("L'antispam est bien désactivé !");
+            await message.reply(`:white_check_mark: L'antispam est bien désactivé !`);
 
         } else {
 
             db.query(`UPDATE server SET antispam = 'true' WHERE guild = '${message.guildId}'`);
-            await message.reply(`L'antispam est bien activé sur le serveur !`);
+            await message.reply(`:white_check_mark: L'antispam est bien activé sur le serveur !`);
 
         }
     }

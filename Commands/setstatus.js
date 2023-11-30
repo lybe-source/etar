@@ -49,6 +49,6 @@ module.exports = {
 
         if (activity === "Streaming") await bot.user.setActivity(status, {type: Discord.ActivityType[activity], url: args.getString("lien")});
         else await bot.user.setActivity(status, {type: Discord.ActivityType[activity]});
-        await message.reply("Status mis à jour avec succès !");
+        await message.reply(`:white_check_mark: Status mis à jour avec succès !`);
     }
 }

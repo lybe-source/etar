@@ -18,7 +18,7 @@ module.exports = {
         {
             type: "string",
             name: "message",
-            description: "Le message du giveway",
+            description: "Le message du giveway", // lorsqu'il y aura l'embed, se sera l'objet à gagner
             required: true,
             autocomplete: false,
         },
@@ -51,7 +51,9 @@ module.exports = {
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
 
-            let messageBOT = await channel.send(messageContent);
+            // Création de l'embed
+
+            let messageBOT = await channel.send(messageContent); // let messageBOT = await channel.send({ embeds: [Embed] });
 
             const config = {
                 guildID: message.guild.id,

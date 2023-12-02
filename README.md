@@ -64,7 +64,7 @@ node main
 ## Liste des commandes pour les évènements
 | Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Description                                                                             |
 |:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:---------------------------------------------------------------------------------------:|
-| setgiveway  | channel              | message              | emoji          |             | Set a giveway in the indicate channel, the message will be send by the bot with the emoji as reaction |
+| setgiveway  | channel              | message              | role           | emoji       | Set a giveway in the indicate channel, the message will be send by the bot with the emoji as reaction, change the permission overwrites of the role indicate |
 
 ## Liste des commandes disponibles (Everyone)
 

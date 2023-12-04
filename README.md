@@ -62,9 +62,9 @@ node main
 | unlock   | channel              | role                 |                | allows the indicate role to write and send files in the indicate channel                         |
 
 ## Liste des commandes pour les évènements
-| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Description                                                                             |
-|:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:---------------------------------------------------------------------------------------:|
-| setgiveway  | channel              | message              | role           | emoji       | Set a giveway in the indicate channel, the message will be send by the bot with the emoji as reaction, change the permission overwrites of the role indicate |
+| Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Parameter 5 | Parameter 6 |Description                                                                             |
+|:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:--------------------:|:--------------:|:---------------------------------------------------------------------------------------:|
+| setgiveway  | channel              | prize                | image (URL)    | role        | emoji | timer | Set a giveway in the indicate channel, the embed will be send by the bot with the emoji as reaction, an image of the prize and a timer (no dynamic), change the permission overwrites of the role indicate |
 
 ## Liste des commandes disponibles (Everyone)
 

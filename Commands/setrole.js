@@ -41,6 +41,7 @@ module.exports = {
     async run(bot, message, args, db) {
 
         try {
+            const TABLE = ["roles", "reactions_role"];
 
             let channel = args.getChannel("salon");
             if (!channel) return await message.reply({ content: "Le salon spécifié n'a pas été trouvé.", ephemeral: true });
@@ -64,7 +65,7 @@ module.exports = {
                 emoji: emoji
             };
 
-            await insertConfigToDatabase(db, config);
+            await insertConfigToDatabase(db, config, TABLE[0]); // await bot.function.insertConfigToDatabase(db, config, TABLE[0]);
 
             const fetchedMessage = await channel.messages.fetch(messageID);
 
@@ -74,7 +75,7 @@ module.exports = {
             await message.deferReply();
             await message.followUp(`:white_check_mark: La réaction a été ajouté avec succès.`);
 
-            handleReaction(bot, fetchedMessage, config);
+            handleReaction(bot, fetchedMessage, config, TABLE); // bot.function.handleReactionRole(bot, fetchedMessage, config, TABLE); // Récupère le tableau en entier
 
         } catch (err) {
             console.error(err);
@@ -83,7 +84,7 @@ module.exports = {
     }
 }
 
-async function handleReaction (bot, message, config) {
+async function handleReaction (bot, message, config, table) {
     const { guild } = message;
 
     // Gérer la réaction pour attribuer le rôle
@@ -92,8 +93,8 @@ async function handleReaction (bot, message, config) {
         const member = guild.members.cache.find(member => member.id === user.id);
         if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
             try {
-                const configID = await insertConfigToDatabase(db, config);
-                await insertMemberReactionToDatabase(db, configID, user.id);
+                const configID = await insertConfigToDatabase(db, config, table[0]);
+                await insertMemberReactionToDatabase(db, configID, user.id, table[1]);
                 await member.roles.add(config.roleID);
             } catch (err) {
                 console.error(err);
@@ -107,8 +108,8 @@ async function handleReaction (bot, message, config) {
         const member = guild.members.cache.find(member => member.id === user.id);
         if (member && reaction.message.id === message.id && reaction.emoji.name === config.emoji) {
             try {
-                const configID = await getConfigIDFromDatabase(db, config);
-                await removeMemberReactionFromDatabase(db, configID, user.id);
+                const configID = await getConfigIDFromDatabase(db, config, table[0]);
+                await removeMemberReactionFromDatabase(db, configID, user.id, table[1]);
                 await member.roles.remove(config.roleID);
             } catch (err) {
                 console.error(err);
@@ -117,9 +118,9 @@ async function handleReaction (bot, message, config) {
     })
 }
 
-async function insertConfigToDatabase (db, config) {
+async function insertConfigToDatabase (db, config, table) {
     try {
-        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectQuery = `SELECT id FROM ${table} WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?`;
         const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 
@@ -128,7 +129,7 @@ async function insertConfigToDatabase (db, config) {
             console.log("Configuration trouvée. ID : ", configID);
             return configID;
         } else {
-            const insertQuery = "INSERT INTO `roles` (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)";
+            const insertQuery = `INSERT INTO ${table} (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)`;
             const insertValues = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
             const [insertResult] = await db.promise().query(insertQuery, insertValues);
 
@@ -143,9 +144,9 @@ async function insertConfigToDatabase (db, config) {
     }
 }
 
-async function insertMemberReactionToDatabase (db, configID, userID) {
+async function insertMemberReactionToDatabase (db, configID, userID, table) {
     try {
-        const insertQuery = "INSERT INTO `reactions_role` (configID, userID) VALUES (?, ?)";
+        const insertQuery = `INSERT INTO ${table} (configID, userID) VALUES (?, ?)`;
         const insertValue = [configID, userID];
         await db.promise().query(insertQuery, insertValue);
 
@@ -157,9 +158,9 @@ async function insertMemberReactionToDatabase (db, configID, userID) {
     }
 }
 
-async function removeMemberReactionFromDatabase (db, configID, userID) {
+async function removeMemberReactionFromDatabase (db, configID, userID, table) {
     try {
-        const deleteQuery = "DELETE FROM `reactions_role` WHERE configID = ? AND userID = ?";
+        const deleteQuery = `DELETE FROM ${table} WHERE configID = ? AND userID = ?`;
         const deleteValue = [configID, userID];
         await db.promise().query(deleteQuery, deleteValue);
 
@@ -171,9 +172,9 @@ async function removeMemberReactionFromDatabase (db, configID, userID) {
     }
 }
 
-async function getConfigIDFromDatabase (db, config) {
+async function getConfigIDFromDatabase (db, config, table) {
     try {
-        const selectQuery = "SELECT id FROM `roles` WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?";
+        const selectQuery = `SELECT id FROM ${table} WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?`;
         const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
         const [result] = await db.promise().query(selectQuery, selectValue);
 

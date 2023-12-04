@@ -65,6 +65,7 @@ node main
 | Command     | Parameter 1          | Parameter 2          | Parameter 3    | Parameter 4 | Parameter 5 | Parameter 6 |Description                                                                             |
 |:------------|:--------------------:|:--------------------:|:--------------:|:-----------:|:--------------------:|:--------------:|:---------------------------------------------------------------------------------------:|
 | setgiveway  | channel              | prize                | image (URL)    | role        | emoji | timer | Set a giveway in the indicate channel, the embed will be send by the bot with the emoji as reaction, an image of the prize and a timer (no dynamic), change the permission overwrites of the role indicate |
+| run-giveway | channel              | messageID            |                |             |       |       | Run the giveway using the id of the giveway message and choose the winner from the members who have reacted |
 
 ## Liste des commandes disponibles (Everyone)
 

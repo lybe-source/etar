@@ -12,8 +12,8 @@ module.exports = async (bot, message, config, table) => {
             const member = guild.members.cache.find(member => member.id === user.id);
             if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
                 try {
-                    const configID = await bot.function.insertConfigToDatabase(db, config, table[0]); // setgiveway: table[0] = giveway,
-                    await bot.function.insertMemberReactionToDatabase(db, configID, user.id, table[1]); // setgiveway: table[1] = reactions_giveway,
+                    const configID = await bot.function.insertConfigToDatabase(db, config, table[0]); // setrole: table[0] = roles,
+                    await bot.function.insertMemberReactionToDatabase(db, configID, user.id, table[1]); // setrole: table[1] = reactions_role,
                     await member.roles.add(config.roleID);
                     resolve();
                 } catch (err) {

@@ -11,12 +11,12 @@ bot.function = {
     createId: require("./Functions/createID"),
     generateCaptcha: require("./Functions/generateCaptcha"),
     searchSpam: require("./Functions/searchSpam"),
-    // handleReactionGiveway: require("./Functions/handleReactionGiveway"),
-    // handleReactionRole: require("./Functions/handleReactionRole"),
-    // insertConfigToDatabase: require("./Functions/insertConfigToDatabase"),
-    // insertMemberReactionToDatabase: require("./Functions/insertMemberReactionToDatabase"),
-    // removeMemberReactionFromDatabase: require("./Functions/removeMemberReactionFromDatabase"),
-    // getConfigIDFromDatabase: require("./Functions/getConfigIDFromDatabase"),
+    handleReactionGiveway: require("./Functions/handleReactionGiveway"),
+    handleReactionRole: require("./Functions/handleReactionRole"),
+    insertConfigToDatabase: require("./Functions/insertConfigToDatabase"),
+    insertMemberReactionToDatabase: require("./Functions/insertMemberReactionToDatabase"),
+    removeMemberReactionFromDatabase: require("./Functions/removeMemberReactionFromDatabase"),
+    getConfigIDFromDatabase: require("./Functions/getConfigIDFromDatabase"),
 }
 
 // Do this bot online

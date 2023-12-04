@@ -68,7 +68,7 @@ module.exports = {
             let emoji = args.getString("emoji");
             if (!emoji) return await message.reply({ content: "L'émoji spécifié n'existe pas.", ephemeral: true });
             let timer = args.getInteger("timer");
-            if (timer === null) timer = 86400; // 24 heures en milliseconde
+            if (timer === null) timer = 86400; // 24 heures en seconde
             
             // Création de l'embed
             const currentTime = new Date();
@@ -104,7 +104,7 @@ module.exports = {
                 emoji: emoji
             };
 
-            await insertConfigToDatabase(db, config, TABLE[0]); // await bot.function.insertConfigToDatabase(db, config, TABLE[0]);
+            await bot.function.insertConfigToDatabase(db, config, TABLE[0]);
 
             await messageBOT.react(emoji);
 
@@ -113,7 +113,7 @@ module.exports = {
 
             await changePermissionsOverwrites(channel, role);
 
-            handleReaction(bot, messageBOT, config, TABLE); // bot.function.handleReactionGiveway(bot, messageBOT, config, TABLE); // Récupère le tableau en entier
+            bot.function.handleReactionGiveway(bot, messageBOT, config, TABLE); // Récupère le tableau en entier
 
         } catch (err) {
 
@@ -145,117 +145,4 @@ function formatTime (timer) {
     const formattedTime = `${formattedHours}h ${formattedMinutes}m ${formattedSeconds}s`;
 
     return formattedTime;
-}
-
-async function handleReaction (bot, message, config, table) {
-    return new Promise((resolve, reject) => {
-        const { guild } = message;
-
-        console.log("Gestion des réactions activée !");
-
-        // Gérer la réaction pour attribuer le rôle
-        bot.on("messageReactionAdd", async (reaction, user) => {
-            let db = bot.db;
-            const member = guild.members.cache.find(member => member.id === user.id);
-            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) { // Le problème doit se situer ici
-                try {
-                    const configID = await insertConfigToDatabase(db, config, table[0]);
-                    await insertMemberReactionToDatabase(db, configID, user.id, table[1]);
-                    resolve();
-                } catch (err) {
-                    console.error(err);
-                    reject(err);
-                }
-            }
-        });
-
-        // Gérer la réaction pour retirer le rôle
-        bot.on("messageReactionRemove", async (reaction, user) => {
-            let db = bot.db;
-            const member = guild.members.cache.find(member => member.id === user.id);
-            if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
-                try {
-                    const configID = await getConfigIDFromDatabase(db, config, table[0]);
-                    await removeMemberReactionFromDatabase(db, configID, user.id, table[1]);
-                    resolve();
-                } catch (err) {
-                    console.error(err);
-                    reject(err);
-                }
-            }
-        })
-    });
-}
-
-async function insertConfigToDatabase (db, config, table) {
-    try {
-        const selectQuery = `SELECT id FROM ${table} WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?`;
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
-        const [result] = await db.promise().query(selectQuery, selectValue);
-
-        if (result.length > 0) {
-            const configID = result[0].id;
-            console.log(`${table} trouvée. ID : `, configID);
-            return configID;
-        } else {
-            const insertQuery = `INSERT INTO ${table} (guildID, channelID, messageID, roleID, emoji) VALUES (?, ?, ?, ?, ?)`;
-            const insertValues = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
-            const [insertResult] = await db.promise().query(insertQuery, insertValues);
-
-            const configID = insertResult.insertId;
-            console.log(`${table} insérée avec succès. ID : `, configID);
-            return configID;
-        }
-
-    } catch (err) {
-        console.error(`Erreur lors de l'insertion du ${table} :`, err);
-        throw err;
-    }
-}
-
-async function insertMemberReactionToDatabase (db, configID, userID, table) {
-    try {
-        const insertQuery = `INSERT INTO ${table} (configID, userID) VALUES (?, ?)`;
-        const insertValue = [configID, userID];
-        await db.promise().query(insertQuery, insertValue);
-
-        console.log("Réaction insérée avec succès.");
-
-    } catch (err) {
-        console.error("Erreur lors de l'insertion de la réaction :", err);
-        console.error("SQL Error :", err.sql);
-        console.error("SQL Error Code :", err.code);
-        throw err;
-    }
-}
-
-async function removeMemberReactionFromDatabase (db, configID, userID, table) {
-    try {
-        const deleteQuery = `DELETE FROM ${table} WHERE configID = ? AND userID = ?`;
-        const deleteValue = [configID, userID];
-        await db.promise().query(deleteQuery, deleteValue);
-
-        console.log("Réaction supprimée avec succès.");
-
-    } catch (err) {
-        console.error("Erreur lors de la suppression de la réaction :", err);
-        throw err;
-    }
-}
-
-async function getConfigIDFromDatabase (db, config, table) {
-    try {
-        const selectQuery = `SELECT id FROM ${table} WHERE guildID = ? AND channelID = ? AND messageID = ? AND roleID = ? AND emoji = ?`;
-        const selectValue = [config.guildID, config.channelID, config.messageID, config.roleID, config.emoji];
-        const [result] = await db.promise().query(selectQuery, selectValue);
-
-        if (result.length > 0) {
-            return result[0].id;
-        } else {
-            throw new Error("Configuration non trouvée.");
-        }
-    } catch (err) {
-        console.error("Erreur lors de la récupération de l'ID de configuration : ", err);
-        throw err;
-    }
 }

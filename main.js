@@ -17,6 +17,7 @@ bot.function = {
     insertMemberReactionToDatabase: require("./Functions/insertMemberReactionToDatabase"),
     removeMemberReactionFromDatabase: require("./Functions/removeMemberReactionFromDatabase"),
     getConfigIDFromDatabase: require("./Functions/getConfigIDFromDatabase"),
+    getConfigIDForGiveway: require("./Functions/getConfigIDForGiveway"),
 }
 
 // Do this bot online

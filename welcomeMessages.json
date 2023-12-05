@@ -1,0 +1,14 @@
+{
+    "welcomeMessages": [
+      "Bienvenue sur le serveur ! 🎉",
+      "Salut {username} ! Content de te voir ici. 🌟",
+      "Nouveau membre détecté. Préparez-vous à accueillir {username} ! 👋",
+      "Hey {username}, bienvenue parmi nous ! 🚀",
+      "Bienvenue, {username} ! Profite bien de ton séjour. 🌈",
+      "Hourra ! {username} vient de rejoindre la fête. 🎊",
+      "Salut {username} ! On attendait quelqu'un d'aussi génial que toi. 😎",
+      "Bienvenue à bord, {username} ! Prépare-toi à vivre une aventure extraordinaire. 🚢",
+      "Hey {username} ! Le serveur vient de devenir 10 fois plus génial avec toi. 🌟",
+      "Nouvelle recrue : {username} ! Prêt à faire partie de la meilleure communauté ? 💪"
+    ]
+}

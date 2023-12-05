@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const fs = require("fs");
+const path = require("path");
 
 module.exports = async (bot, member) => {
 
@@ -22,20 +24,38 @@ module.exports = async (bot, member) => {
         if (channelID === 'false') return;
         
         const welChannel = member.guild.channels.cache.get(req[0].welchannel);
+
+        const jsonPath = path.join(__dirname, '../welcomeMessages.json');
+        const rawdata = fs.readFileSync(jsonPath);
+        const messagesData = JSON.parse(rawdata);
+
+        const randomWelcomeMessage = getRandomWelcomeMessage(messagesData);
+        const accountCreated = formatDate(member.user.createdAt);
+        const joinDate = formatDate(member.joinedAt);
+        const formattedMessage = randomWelcomeMessage
+            .replace(/{username}/g, member.user.tag)
+            .replace(/{accountCreated}/g, accountCreated)
+            .replace(/{joinDate}/g, joinDate);
+
+        const file = new Discord.AttachmentBuilder('../Etar-Bot/public/img/transparent_pixel.png'); // Il faudra surement faire mieux voir un canvas
         
         const Embed = new Discord.EmbedBuilder()
             .setColor(`${member.displayHexColor}`)
             .setTitle("Bienvenue à toi")
-            .setAuthor({ 
-                    name: member.user.tag, 
-                    // iconURL: member.user.displayAvatarURL({dynamic: true}) 
-                })
-            // .setDescription("Bienvenue à toi")
-            .setThumbnail({ URL: member.user.displayAvatarURL({ dynamic: true, size: 4096 }) })
+            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 4096 }))
+            .setImage('attachment://transparent_pixel.png')
+            .addFields(
+                { name: '\u2000', value: '\u2000' }, // Espace insécable
+                { name: 'Message', value: `${formattedMessage}` },
+                { name: '\u2000', value: '\u2000' }, // Espace insécable
+                { name: 'Date de création', value: accountCreated, inline: true },
+                { name: 'Rejoint le', value: joinDate, inline: true },
+            )
             .setTimestamp()
             .setFooter({ text: `ID: ${member.id}` })
             ;
-        if (welChannel) await welChannel.send({ embeds: [Embed] });
+
+        if (welChannel) await welChannel.send({ embeds: [Embed], files: [file] });
 
         if (req[0].captcha === "false") return;
 
@@ -84,4 +104,19 @@ module.exports = async (bot, member) => {
         }
 
     });
+}
+
+
+function getRandomWelcomeMessage (messagesData) {
+
+    const randomIndex = Math.floor(Math.random() * messagesData.welcomeMessages.length);
+    
+    return messagesData.welcomeMessages[randomIndex];
+}
+
+function formatDate (date) {
+    
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+
+    return new Intl.DateTimeFormat('fr-FR', options).format(date);
 }

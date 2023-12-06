@@ -18,6 +18,8 @@ module.exports = async (bot, member) => {
             await member.kick("Antiraid actif");
         }
 
+
+        
         if (req[0].welchannel === "false") return;
 
         const selectQuery = "SELECT `welchannel` FROM `server` WHERE guild = ?";
@@ -87,17 +89,24 @@ module.exports = async (bot, member) => {
         ctx.fillText(welc, 450, 180);
 
         // Welcome message
-        ctx.font = "bold 35px Arial";
+        ctx.font = "bold 50px Arial";
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 10;
         const lines = wrapText(ctx, formattedMessage, 600);
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            ctx.strokeText(line, 450, 250 + i * 40); // Ajuster la position en conséquence, le * 30 correspond à l'espacement vertical entre chaque ligne de texte
+            ctx.strokeText(line, 450, 350 + i * 55); // Ajuster la position en conséquence, le * 30 correspond à l'espacement vertical entre chaque ligne de texte
             ctx.fillStyle = "#EB6123";
-            ctx.fillText(line, 450, 250 + i * 40);
+            ctx.fillText(line, 450, 350 + i * 55);
         }
+
+        // Date de création du compte
+        ctx.font = "bold 30px Arial";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(`Créé le : ${accountCreated}`, 750, canvas.height - 75);
+        // Date de rejoignement
+        ctx.fillText(`Rejoint le : ${joinDate}`, 750, canvas.height - 35);
 
         // Discriminator
         // ctx.font = "bold 45px Arial";
@@ -148,6 +157,8 @@ module.exports = async (bot, member) => {
 
         const attachment = new Discord.AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'welcome-image.png' });
         if (welChannel) welChannel.send({ files: [attachment] });
+
+
 
 
         if (req[0].captcha === "false") return;

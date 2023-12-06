@@ -124,64 +124,31 @@ module.exports = async (bot, member) => {
             canvas.height - 35
         );
 
-        // Avatar
+        // Avatar, Canvas size : 1200x800
         ctx.beginPath();
         ctx.lineWidth = 10;
         ctx.strokeStyle = "#E96423";
-        img = await Canvas.loadImage(member.displayAvatarURL({ format: "png" }));
+        const img = await Canvas.loadImage(member.displayAvatarURL({ format: "png" }));
         const centerY = (canvas.height - img.height) / 2;
-        ctx.arc(180, centerY + img.height / 2, 135, 0, Math.PI * 2, true);
+        const centerX = 180;
+
+        // Dessiner le cercle
+        ctx.arc(centerX, centerY + img.height / 2, 135, 0, Math.PI * 2, true);
         ctx.stroke();
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(img, 45 + 180 - img.width / 2, centerY + 135 - img.height / 2, 270, 270);
+
+        // Calculer les coordonnées de dessin de l'image en fonction du cercle
+        const imgX = centerX - 135;
+        const imgY = centerY + img.height / 2 - 135;
+
+        // Dessine l'image
+        ctx.drawImage(img, imgX, imgY, 270, 270);
         ctx.restore();
 
         const attachment = new Discord.AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'welcome-image.png' });
         if (welChannel) welChannel.send({ files: [attachment] });
 
-        // const avatar = new Canvas.Image();
-        // avatar.onload = function () {
-        //     // Une fois l'image chargée, dessine l'avatar
-        //     ctx.drawImage(avatar, 25, 25, 200, 200);
-
-        //     // Dessine le message de bienvenue et les autres informations
-        //     ctx.fillStyle = '#FFFFFF'; // Couleur du texte
-        //     ctx.font = '30px agbalumo'; // Taille et police du texte
-        //     ctx.fillText(`Bienvenue à toi`, 250, 100);
-
-        //     // Dessine d'autres informations
-        //     ctx.font = '20px agbalumo';
-        //     ctx.fillText('Message :', 250, 150);
-        //     ctx.fillText(formattedMessage, 250, 180);
-
-        //     ctx.fillText('Date de création :', 250, 250);
-        //     ctx.fillText(accountCreated, 250, 280);
-
-        //     ctx.fillText('Rejoint le :', 250, 320);
-        //     ctx.fillText(joinDate, 250, 350);
-
-        //     // Dessine le pied de page avec l'ID
-        //     ctx.fillText(`ID: ${member.id}`, 20, 430);
-
-        //     // Envoie le message avec l'image
-        //     const attachment = new Discord.AttachmentBuilder(canvas.toBuffer(), { name: 'welcome-image.png' });
-        //     if (welChannel) welChannel.send({ files: [attachment] });
-        // }
-
-        // // Dessine un cadre autour de l'avatar
-        // ctx.strokeRect(25, 25, 200, 200);
-        
-        // // Crée un cercle de découpe autour de l'avatar
-        // ctx.beginPath();
-        // ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
-        // ctx.closePath();
-        // ctx.clip();
-        
-        // // Charge l'avatar du membre
-        // avatar.src = member.user.displayAvatarURL({ format: 'jpg' });
-        // // Dessine l'avatar
-        // ctx.drawImage(avatar, 25, 25, 200, 200);
 
         if (req[0].captcha === "false") return;
 

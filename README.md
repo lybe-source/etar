@@ -124,3 +124,9 @@ npm i discord-canvas-easy@latest
 ```bash
 npm i canvas
 ```
+
+### @napi-rs/canvas
+
+```bash
+npm i @napi-rs/canvas
+```

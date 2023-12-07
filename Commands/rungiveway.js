@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 
 module.exports = {
 
-    name: "run-giveway",
+    name: "rungiveway",
     description: "Lancer un giveway",
     permission: Discord.PermissionFlagsBits.ManageMessages,
     dm: false,

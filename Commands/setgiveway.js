@@ -55,7 +55,7 @@ module.exports = {
     async run(bot, message, args, db) {
 
         try {
-            const TABLE = ["giveway", "reactions_giveway"];
+            const TABLE = ["giveway", "reactions_giveway", "timer_giveway"];
 
             let channel = args.getChannel("salon");
             if (!channel) return await message.reply({ content: "Le salon spécifié n'a pas été trouvé.", ephemeral: true });
@@ -72,7 +72,7 @@ module.exports = {
             
             // Création de l'embed
             const currentTime = new Date();
-            const endTime = new Date(currentTime.getTime() + timer);
+            const endTime = new Date(currentTime.setSeconds(currentTime.getSeconds() + timer));
             // Utilise les options pour enlever les secondes
             const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
             const formattedEndTime = endTime.toLocaleString(undefined, options);
@@ -106,6 +106,8 @@ module.exports = {
 
             await bot.function.insertConfigToDatabase(db, config, TABLE[0]);
 
+            await bot.function.insertEndTimeGivewayToDatabase(bot, config, endTime, TABLE);
+
             await messageBOT.react(emoji);
 
             await message.deferReply();
@@ -134,9 +136,9 @@ async function changePermissionsOverwrites (channel, role) {
 
 function formatTime (timer) {
     
-    const hours = Math.floor(timer / (60 * 60));
-    const minutes = Math.floor((timer % (60 * 60)) / 60);
-    const seconds = Math.floor((timer % (60)) / 1000);
+    const hours = Math.floor(timer / 3600); // If timer = 86400, hours = 24
+    const minutes = Math.floor((timer % 3600) / 60); // If timer = 86400, minutes = 0
+    const seconds = Math.floor(timer % 60); // If timer = 86400, seconds = 0
 
     const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
     const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;

@@ -18,6 +18,8 @@ bot.function = {
     removeMemberReactionFromDatabase: require("./Functions/removeMemberReactionFromDatabase"),
     getConfigIDFromDatabase: require("./Functions/getConfigIDFromDatabase"),
     getConfigIDForGiveway: require("./Functions/getConfigIDForGiveway"),
+    insertEndTimeGivewayToDatabase: require("./Functions/insertEndTimeGivewayToDatabase"),
+    getEndTimeFromDatabase: require("./Functions/getEndTimeFromDatabase"),
 }
 
 // Do this bot online

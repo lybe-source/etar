@@ -12,6 +12,19 @@ module.exports = async (bot, message, config, table) => {
             const member = guild.members.cache.find(member => member.id === user.id);
             if (member && reaction.message.id === config.messageID && reaction.emoji.name === config.emoji) {
                 try {
+
+                    let currentTime = new Date();
+                    const endTime = await bot.function.getEndTimeFromDatabase(bot, config, table); // setgiveway: table = ["giveway", "reactions_giveway", "timer_giveway"],
+                    
+                    // Si l'heure actuelle dépasse l'heure de fin du giveway
+                    if (currentTime.getTime() > endTime.getTime()) {
+                    
+                        try { 
+                            await user.send(`Le temps pour le giveway est dépassé`) 
+                            reaction.users.remove(user); // retirer la réaction du membre
+                        } catch (err) {}
+                    }
+                        
                     const configID = await bot.function.insertConfigToDatabase(db, config, table[0]); // setgiveway: table[0] = giveway,
                     await bot.function.insertMemberReactionToDatabase(db, configID, user.id, table[1]); // setgiveway: table[1] = reactions_giveway,
                     resolve();

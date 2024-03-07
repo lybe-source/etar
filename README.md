@@ -14,7 +14,7 @@
 
 ---
 
-## Installation
+## Project creation
 
 ### Initialiser npm
 
@@ -51,7 +51,7 @@ node main
 | Command  | Parameter 1          | Parameter 2          | Parameter 3    | Description                                                                                      |
 |:---------|:--------------------:|:--------------------:|:--------------:|:------------------------------------------------------------------------------------------------:|
 | kick     | username OR userID   | reason OR null       |                | Kick out a member                                                                                |
-| ban      | username OR userID   | reason OR null       |                | Same as kick but prevents it from coming back with an invitation link                            |
+| ban      | username OR userID   | on OR off            | reason OR null | Same as kick but prevents it from coming back with an invitation link                            |
 | unban    | username OR userID   | reason OR null       |                | Removes the ban if the user is banned from the server                                            |
 | mute     | username OR userID   | duration(days OR hours OR seconds) | reason OR null | Prevents the member from writing, reacting or joining a voice channel for up to 28 days. Time unit : Days = d, hours = h, seconds = s |
 | unmute   | username OR userID   | reason OR null       |                | Allows the muted user to speak again, react and join voice channels                              |

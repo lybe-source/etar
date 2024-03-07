@@ -14,7 +14,7 @@ module.exports = async (bot, interaction) => {
 
         }
 
-        if (interaction.commandName === "setcaptcha" || interaction.commandName === "setantiraid" || interaction.commandName === "setantispam" || interaction.commandName === "setwelcome") {
+        if (interaction.commandName === "setcaptcha" || interaction.commandName === "setantiraid" || interaction.commandName === "setantispam" || interaction.commandName === "setwelcome" || interaction.commandName === "ban") {
             
             let choices = ["on", "off"];
             let output = choices.filter(c => c.includes(entry));

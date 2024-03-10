@@ -45,6 +45,7 @@ node main
 | setantispam | on or off            |                      |                |             | Set the antispam in the server, if the member send more than 5 message in 3 secondes |
 | setstatus   | activity             | status               | url            |             | Set the status of the bot, choice in the activity list, for streaming activity, the url is required (twitch.tv) |
 | setrole     | channel              | messageID            | role           | emoji       | Set the emoji for role reaction attached to the message in the channel |
+| setwelcome  | on or off            | channel or channelID |                |             | Set a channel to show welcome notifications in the server |
 
 ## Liste des commandes disponibles (Modération)
 
